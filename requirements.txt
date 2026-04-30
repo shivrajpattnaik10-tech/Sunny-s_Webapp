@@ -1,1 +1,7 @@
+streamlit
+pandas
+wordcloud
+matplotlib
+pillow
+
 
