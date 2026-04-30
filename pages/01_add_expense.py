@@ -1,47 +1,75 @@
 import streamlit as st
 import pandas as pd
-import time,os
+import os
 
-folder_path="/workspaces/codespaces-blank/data"
-excel_file_path ="/workspaces/codespaces-blank/data/expense.csv"
+# --------- File Paths (FIXED for Streamlit Cloud) ---------
+folder_path = "data"
+excel_file_path = "data/expense.csv"
 
+# --------- Create Folder & File if Not Exists ---------
 if not os.path.exists(folder_path):
     os.makedirs(folder_path)
 
 if not os.path.exists(excel_file_path) or os.stat(excel_file_path).st_size == 0:
     expenses = pd.DataFrame(columns=["Date","Category","Description","Currency Type","Amount"])
-    expenses.to_csv(excel_file_path,index=False)
+    expenses.to_csv(excel_file_path, index=False)
 
-date = st.date_input('Date :date:',key="da")
+# --------- UI Inputs ---------
+st.title("💰 Expense Tracker")
 
-category = st.selectbox("Category :card_index_dividers:",("Housing","Utilities","Transportation","Food","Healthcare","Insurance","Debt Payments","Entertainment","Personal Care","Education","Savings","Taxes","Miscellaneous"),key="cat")
+date = st.date_input('Date 📅', key="da")
 
-description=st.text_input('Description :flashlight:',key='desc')
+category = st.selectbox(
+    "Category 📂",
+    ("Housing","Utilities","Transportation","Food","Healthcare",
+     "Insurance","Debt Payments","Entertainment","Personal Care",
+     "Education","Savings","Taxes","Miscellaneous"),
+    key="cat"
+)
 
-currency_type = st.selectbox("Currency type :heavy_dollar_sign: /  :euro:",("Dollars","Euros"))
+description = st.text_input('Description 🔍', key='desc')
 
-amount=st.number_input('Amount :money_mouth_face:',key='am',min_value=0,step=1,max_value=20000)
+currency_type = st.selectbox("Currency 💲 / 💶", ("Dollars","Euros"))
 
+amount = st.number_input('Amount 💵', key='am', min_value=0, step=1, max_value=20000)
+
+# --------- Functions ---------
 def clear():
-    st.session_state.am=0
-    st.session_state.desc=""
+    st.session_state.am = 0
+    st.session_state.desc = ""
 
-def insert(date,category,description,currency_type,amount):
-    dataframe=pd.read_csv(excel_file_path)
-    length=len(dataframe)
-    if description!="" and amount>0:
-        dataframe.loc[length]=[date,category,description,currency_type,amount]
-        dataframe.to_csv(excel_file_path,index=False)
+def insert(date, category, description, currency_type, amount):
+    dataframe = pd.read_csv(excel_file_path)
+    length = len(dataframe)
+
+    if description.strip() != "" and amount > 0:
+        dataframe.loc[length] = [date, category, description, currency_type, amount]
+        dataframe.to_csv(excel_file_path, index=False)
+        st.success("Expense added successfully!")
         st.balloons()
     else:
-        st.error("Please provide a description and a valid amount value greater than zero.")
+        st.error("Please provide a description and a valid amount greater than zero.")
 
-col1,col2 = st.columns([0.24,0.9])
+# --------- Buttons Layout ---------
+col1, col2 = st.columns([0.3, 0.7])
 
 with col1:
-    add = st.button("Add Expense :money_with_wings:")
-with col2:
-    clear_button = st.button("Clear :scissors:",on_click=clear)
+    add = st.button("Add Expense 💸")
 
+with col2:
+    clear_button = st.button("Clear ✂️", on_click=clear)
+
+# --------- Action ---------
 if add:
-    insert(date,category,description,currency_type,amount)
+    insert(date, category, description, currency_type, amount)
+
+# --------- Show Data ---------
+st.subheader("📊 Expense Records")
+
+try:
+    df = pd.read_csv(excel_file_path)
+    st.dataframe(df)
+except:
+    st.info("No data available yet.")
+
+
