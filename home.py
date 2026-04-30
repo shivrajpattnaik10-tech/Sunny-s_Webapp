@@ -11,4 +11,4 @@ with tab2:
     st.write("My hobbies are swimming and coding")
 with tab3:
     st.write("Email: Shivrajpattnaik10@gmail.com")
-    st.write("Website: https://sturdy-waddle-7vqj6vv795pvhw5v9-8501.app.github.dev/")
+    st.write("Website: https://sunny-swebapp-aeupbs937qjpaauadydgtx.streamlit.app/")
